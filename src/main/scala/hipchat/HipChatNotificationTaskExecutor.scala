@@ -2,14 +2,12 @@ package hipchat
 
 import com.thoughtworks.go.plugin.api.response.execution.ExecutionResult
 import com.thoughtworks.go.plugin.api.task._
-import java.io.FileNotFoundException
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
 import org.streum.configrity.Configuration
-import scala.io.Source
-import scala.util.Try
+
+import scala.collection.JavaConverters._
 import scalaj.http._
-import collection.JavaConverters._
 
 object HipChatNotificationTaskExecutor {
   val BASE_URL = "GO_BASE_URL"
@@ -30,6 +28,7 @@ object HipChatNotificationTaskExecutor {
 }
 
 class HipChatNotificationTaskExecutor extends TaskExecutor {
+
   import HipChatNotificationTaskExecutor._
 
   override def execute(taskConfig: TaskConfig, taskContext: TaskExecutionContext): ExecutionResult = {
@@ -57,8 +56,8 @@ class HipChatNotificationTaskExecutor extends TaskExecutor {
         stageName <- envVars.get(STAGE_NAME)
         stageNumber <- envVars.get(STAGE_NUMBER)
       } yield {
-        s"${baseUrl}go/pipelines/$pipelineName/$buildNumber/$stageName/$stageNumber"
-      })
+          s"${baseUrl}go/pipelines/$pipelineName/$buildNumber/$stageName/$stageNumber"
+        })
     }
 
     val systemEnvironmentVars = taskContext.environment.asMap.asScala.toMap

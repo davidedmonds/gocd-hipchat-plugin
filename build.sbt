@@ -4,7 +4,7 @@ version := "1.0"
 
 scalaVersion := "2.10.4"
 
-val goVersion = "14.4.0"
+val goVersion = "15.1.0"
 
 packageOptions in (Compile, packageBin) +=
   Package.ManifestAttributes( "Go-Version" -> goVersion )
@@ -14,7 +14,6 @@ artifactName := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
 }
 
 assemblyJarName in assembly := name.value + ".jar"
-
 
 scalariformSettings
 
@@ -27,5 +26,3 @@ libraryDependencies ++= Seq(
 )
 
 scalacOptions += "-target:jvm-1.7"
-
-libraryDependencies += "org.specs2" %% "specs2" % "2.4.2" % "test"
