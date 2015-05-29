@@ -5,6 +5,7 @@ import com.thoughtworks.go.plugin.api.task._
 import java.io.FileNotFoundException
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
+import org.streum.configrity.Configuration
 import scala.io.Source
 import scala.util.Try
 import scalaj.http._
@@ -17,8 +18,8 @@ object HipChatNotificationTaskExecutor {
   val SERVER_URL = "GO_SERVER_URL"
   val STAGE_NAME = "GO_STAGE_NAME"
   val STAGE_NUMBER = "GO_STAGE_COUNTER"
-
-  def getToken() = Try(Source.fromURL(getClass.getResource("/token.txt")).getLines.toList(0)).getOrElse(throw new FileNotFoundException("HipChat token not found"))
+  val config = Configuration.load(System.getProperty("user.home") + ".hipchat")
+  val hipchatServer = config[String]("hipchat_server")
 
   def replaceEnvVars(msg: String, vars: Map[String, String]): String = {
     val regexes = vars.collect { case (varName, value) => ((raw"\$$\{?" + varName + raw"\}?").r, value) }
@@ -43,7 +44,7 @@ class HipChatNotificationTaskExecutor extends TaskExecutor {
   private def notifyHipchat(taskConfig: TaskConfig, taskContext: TaskExecutionContext): ExecutionResult = {
 
     //todo: fail sbt build if not found
-    val token = getToken()
+    val token = Option(taskConfig.getValue(HipChatNotificationTask.ROOM_KEY)).filterNot(_.trim.isEmpty).getOrElse(throw new Exception("Room API Key not found"))
 
     val roomName = Option(taskConfig.getValue(HipChatNotificationTask.ROOM)).filterNot(_.trim.isEmpty).getOrElse(throw new Exception("HipChat room not found"))
 
@@ -92,7 +93,7 @@ class HipChatNotificationTaskExecutor extends TaskExecutor {
 
     taskContext.console.printLine(s"Sending notification to $roomName: $msg")
 
-    val hipchat = Http(s"http://api.hipchat.com/v2/room/$roomName/notification").header("Authorization", s"Bearer $token")
+    val hipchat = Http(s"$hipchatServer/v2/room/$roomName/notification").header("Authorization", s"Bearer $token")
       .header("content-type", "application/json")
       .postData(compact(render(hipchatMsg))).asString
 

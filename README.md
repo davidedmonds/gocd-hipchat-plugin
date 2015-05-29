@@ -3,9 +3,12 @@ GoCD Hipchat Notification Plugin [![Build Status](https://travis-ci.org/PagerDut
 
 To install:
 
-* Add your hipchat token to `src/main/resources/token.txt`
 * Run `sbt clean assembly`
 * Copy `gocd-hipchat-plugin.jar` from `target/scala-2.10/` to the `plugins/external` folder on your GoCD server
+* Create a file named ".hipchat" in the home folder for all agents and servers, containing the following:
+```
+hipchat_server=http://{{your_hipchat_server_here}}
+```
 * Restart the server
 * HipChat notification is now available as a task plugin
 

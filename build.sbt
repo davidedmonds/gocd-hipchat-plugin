@@ -19,12 +19,11 @@ assemblyJarName in assembly := name.value + ".jar"
 scalariformSettings
 
 libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-compiler" % scalaVersion.value,
   "org.scala-lang" % "scala-library" % scalaVersion.value,
-  "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   "org.scalaj" %% "scalaj-http" % "1.0.1",
   "org.json4s" %% "json4s-native" % "3.2.11" exclude("org.scala-lang", "scalap"),
-  "com.thoughtworks.go" %%  "go-plugin-api" % "current"  % "provided" from "https://bintray.com/artifact/download/gocd/gocd/go-plugin-api-14.4.0.jar"
+  "com.thoughtworks.go" %%  "go-plugin-api" % "current"  % "provided" from "https://bintray.com/artifact/download/gocd/gocd/go-plugin-api-15.1.0.jar",
+  "org.streum" %% "configrity-core" % "1.0.0"
 )
 
 scalacOptions += "-target:jvm-1.7"
