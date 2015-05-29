@@ -56,8 +56,8 @@ class HipChatNotificationTaskExecutor extends TaskExecutor {
         stageName <- envVars.get(STAGE_NAME)
         stageNumber <- envVars.get(STAGE_NUMBER)
       } yield {
-          s"${baseUrl}go/pipelines/$pipelineName/$buildNumber/$stageName/$stageNumber"
-        })
+        s"${baseUrl}go/pipelines/$pipelineName/$buildNumber/$stageName/$stageNumber"
+      })
     }
 
     val systemEnvironmentVars = taskContext.environment.asMap.asScala.toMap

@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "org.scalaj" %% "scalaj-http" % "1.0.1",
   "org.json4s" %% "json4s-native" % "3.2.11" exclude("org.scala-lang", "scalap"),
   "com.thoughtworks.go" %%  "go-plugin-api" % "current"  % "provided" from "https://bintray.com/artifact/download/gocd/gocd/go-plugin-api-15.1.0.jar",
-  "org.streum" %% "configrity-core" % "1.0.0"
+  "org.streum" %% "configrity-core" % "1.0.0" exclude("org.scalatest", "scalatest_2.10")
 )
 
 scalacOptions += "-target:jvm-1.7"

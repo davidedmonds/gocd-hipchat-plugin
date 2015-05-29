@@ -1,8 +1,8 @@
 package hipchat
 
 import com.thoughtworks.go.plugin.api.annotation.Extension
-import com.thoughtworks.go.plugin.api.response.validation.{ValidationError, ValidationResult}
-import com.thoughtworks.go.plugin.api.task.{Task, TaskConfig, TaskView}
+import com.thoughtworks.go.plugin.api.response.validation.{ ValidationError, ValidationResult }
+import com.thoughtworks.go.plugin.api.task.{ Task, TaskConfig, TaskView }
 
 object HipChatNotificationTask {
   val NOTIFICATION_TYPE = "NotificationType"
