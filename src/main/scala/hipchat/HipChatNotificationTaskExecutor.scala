@@ -16,8 +16,7 @@ object HipChatNotificationTaskExecutor {
   val SERVER_URL = "GO_SERVER_URL"
   val STAGE_NAME = "GO_STAGE_NAME"
   val STAGE_NUMBER = "GO_STAGE_COUNTER"
-  val config = Configuration.load(System.getProperty("user.home") + "/.hipchat")
-  val hipchatServer = config[String]("hipchat_server")
+  val hipchatServer = "https://hipchat.gamesys.co.uk"
 
   def replaceEnvVars(msg: String, vars: Map[String, String]): String = {
     val regexes = vars.collect { case (varName, value) => ((raw"\$$\{?" + varName + raw"\}?").r, value) }
@@ -35,21 +34,21 @@ class HipChatNotificationTaskExecutor extends TaskExecutor {
     try {
       notifyHipchat(taskConfig, taskContext)
     } catch {
-      case e: Exception =>
+      case e: Exception => {
+        taskContext.console().printLine(e.getMessage)
         ExecutionResult.failure("Failed to notify hipchat", e)
+      }
     }
   }
 
   private def notifyHipchat(taskConfig: TaskConfig, taskContext: TaskExecutionContext): ExecutionResult = {
-
-    //todo: fail sbt build if not found
     val token = Option(taskConfig.getValue(HipChatNotificationTask.ROOM_KEY)).filterNot(_.trim.isEmpty).getOrElse(throw new Exception("Room API Key not found"))
 
     val roomName = Option(taskConfig.getValue(HipChatNotificationTask.ROOM)).filterNot(_.trim.isEmpty).getOrElse(throw new Exception("HipChat room not found"))
 
     val buildUrl: Option[String] = {
       val envVars = taskContext.environment.asMap.asScala
-      (for {
+      for {
         baseUrl <- envVars.get(BASE_URL)
         pipelineName <- envVars.get(PIPELINE_NAME)
         buildNumber <- envVars.get(BUILD_NUMBER)
@@ -57,7 +56,7 @@ class HipChatNotificationTaskExecutor extends TaskExecutor {
         stageNumber <- envVars.get(STAGE_NUMBER)
       } yield {
         s"${baseUrl}go/pipelines/$pipelineName/$buildNumber/$stageName/$stageNumber"
-      })
+      }
     }
 
     val systemEnvironmentVars = taskContext.environment.asMap.asScala.toMap
@@ -92,7 +91,8 @@ class HipChatNotificationTaskExecutor extends TaskExecutor {
 
     taskContext.console.printLine(s"Sending notification to $roomName: $msg")
 
-    val hipchat = Http(s"$hipchatServer/v2/room/$roomName/notification").header("Authorization", s"Bearer $token")
+    val hipchat = Http(s"$hipchatServer/v2/room/$roomName/notification")
+      .header("Authorization", s"Bearer $token")
       .header("content-type", "application/json")
       .postData(compact(render(hipchatMsg))).asString
 
